@@ -1,12 +1,19 @@
 import React from "react";
 
-export default function List({ tasks }) {
+export default function List({ tasks, onClickDelete }) {
+  if (tasks.length === 0) {
+    return <p>할 일이 없어요.</p>;
+  }
   return (
     <div>
-      <h1>To-do</h1>
       <ul>
         {tasks.map((task) => (
-          <li key={task.id}>{task.title}</li>
+          <li key={task.id}>
+            {task.title}
+            <button type="button" onClick={() => onClickDelete(task.id)}>
+              완료
+            </button>
+          </li>
         ))}
       </ul>
     </div>

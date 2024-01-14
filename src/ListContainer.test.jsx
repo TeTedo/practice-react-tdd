@@ -1,8 +1,8 @@
 import React from "react";
 
-import { useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 
-import { render } from "@testing-library/react";
+import { fireEvent, render } from "@testing-library/react";
 
 import ListContainer from "./ListContainer";
 
@@ -11,6 +11,10 @@ import tasks from "../fixtures/tasks";
 jest.mock("react-redux");
 
 describe("ListContainer", () => {
+  const dispatch = jest.fn();
+
+  useDispatch.mockImplementation(() => dispatch);
+
   useSelector.mockImplementation((selector) =>
     selector({
       tasks,
@@ -18,8 +22,17 @@ describe("ListContainer", () => {
   );
 
   it("renders tasks", () => {
-    const { container } = render(<ListContainer />);
+    const { container, getAllByText } = render(<ListContainer />);
 
     expect(container).toHaveTextContent("아무 일도 하기 싫다.");
+
+    const buttons = getAllByText("완료");
+
+    fireEvent.click(buttons[0]);
+
+    expect(dispatch).toBeCalledWith({
+      type: "deleteTask",
+      payload: { id: 1 },
+    });
   });
 });
